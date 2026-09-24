@@ -76,3 +76,56 @@ export interface Answer {
   like_count: number
   created_at: string
 }
+
+export interface QuizOption {
+  index: number
+  text: string
+}
+
+export interface QuizQuestion {
+  id: number
+  question: string
+  options: QuizOption[]
+  answer: number
+  explanation: string
+}
+
+export interface QuizSubmitAnswer {
+  question_id: number
+  selected_index: number
+}
+
+export interface QuizSubmitResult {
+  total: number
+  correct: number
+  score: number
+  wrong_count: number
+  wrong_ids: number[]
+  saved: boolean
+}
+
+export interface QuizRetryResult {
+  question_id: number
+  correct: boolean
+  mastered: boolean
+}
+
+export interface WrongQuestion {
+  id: number
+  question_id: number
+  selected_index: number
+  mastered: boolean
+  question: string
+  options: QuizOption[]
+  answer: number
+  explanation: string
+  created_at: string
+  updated_at: string
+}
+
+export interface WrongBookStats {
+  total: number
+  unmastered: number
+  mastered: number
+  progress: number
+}

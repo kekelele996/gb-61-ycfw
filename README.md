@@ -159,6 +159,11 @@ gb-61/
 | POST | /api/v1/questions/:id/answers | 登录 | 回答问题 |
 | PUT | /api/v1/questions/:id/adopt | 登录 | 采纳最佳回答（事务：清旧最佳+标最佳+关闭问题） |
 | PUT | /api/v1/answers/:id/like | 登录 | 回答点赞 |
+| GET | /api/v1/quiz/questions | 公开 | 养护测验题库 |
+| POST | /api/v1/quiz/submit | 公开（限流） | 交卷评分；登录时错题自动收录错题本，未登录只出成绩不留记录 |
+| GET | /api/v1/quiz/wrong-book | 登录 | 错题本列表（含题目、最近误选选项、掌握状态） |
+| GET | /api/v1/quiz/wrong-book/stats | 登录 | 错题统计：未掌握/已掌握数量与掌握进度 |
+| POST | /api/v1/quiz/wrong-book/:questionId/retry | 登录（限流） | 错题重做判分：答对记为已掌握，答错更新选择并保持未掌握 |
 | POST | /api/v1/uploads | 登录（限流） | 上传图片 |
 
 ## 枚举出现位置清单

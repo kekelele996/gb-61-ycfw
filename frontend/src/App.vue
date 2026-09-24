@@ -11,6 +11,11 @@
         <el-menu-item index="/garden">我的花园</el-menu-item>
         <el-menu-item index="/questions">问答社区</el-menu-item>
         <el-menu-item index="/quiz">养护测验</el-menu-item>
+        <el-menu-item v-if="auth.token" index="/wrong-book">
+          <el-badge :value="wrongBook.stats.unmastered" :hidden="wrongBook.stats.unmastered === 0" class="wrong-badge">
+            错题本
+          </el-badge>
+        </el-menu-item>
       </el-menu>
       <div class="user-area">
         <template v-if="auth.token">
@@ -34,11 +39,28 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
+import { useWrongBookStore } from '@/stores/wrongBookStore'
 
 const auth = useAuthStore()
+const wrongBook = useWrongBookStore()
 const router = useRouter()
+
+onMounted(async () => {
+  if (auth.token) {
+    await wrongBook.loadStats()
+  }
+})
+
+watch(() => auth.token, (token) => {
+  if (token) {
+    wrongBook.loadStats()
+  } else {
+    wrongBook.reset()
+  }
+})
 
 function onCommand(cmd: string) {
   if (cmd === 'profile') {
@@ -57,4 +79,5 @@ html, body, #app { margin: 0; height: 100%; background: #f6f8f4; font-family: "P
 .brand { font-size: 20px; font-weight: 700; color: #3c8d5c; cursor: pointer; white-space: nowrap; }
 .user-area { margin-left: auto; }
 .user-name { cursor: pointer; color: #3c8d5c; font-weight: 600; }
+.wrong-badge { margin-right: 12px; }
 </style>

@@ -37,6 +37,10 @@ func main() {
 		logger.Error("failed to seed database", "error", err)
 		os.Exit(1)
 	}
+	if err := seedQuizQuestions(db); err != nil {
+		logger.Error("failed to seed quiz questions", "error", err)
+		os.Exit(1)
+	}
 
 	r := router.Setup(cfg, db, logger)
 	r.Static("/uploads", cfg.UploadDir)

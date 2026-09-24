@@ -21,6 +21,8 @@ func migrate(db *gorm.DB) error {
 		&model.UserGarden{},
 		&model.Question{},
 		&model.Answer{},
+		&model.QuizQuestion{},
+		&model.WrongQuestion{},
 	)
 }
 

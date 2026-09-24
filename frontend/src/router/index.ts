@@ -14,6 +14,7 @@ const routes: RouteRecordRaw[] = [
   { path: '/questions', name: 'questions', component: () => import('@/pages/QuestionCommunity.vue'), meta: { title: '问答社区' } },
   { path: '/questions/:id', name: 'questionDetail', component: () => import('@/pages/QuestionDetail.vue'), meta: { title: '问题详情' } },
   { path: '/quiz', name: 'quiz', component: () => import('@/pages/Quiz.vue'), meta: { title: '养护测验' } },
+  { path: '/wrong-book', name: 'wrongBook', component: () => import('@/pages/WrongBook.vue'), meta: { title: '错题本', requiresAuth: true } },
   { path: '/profile', name: 'profile', component: () => import('@/pages/Profile.vue'), meta: { title: '个人中心', requiresAuth: true } },
   { path: '/login', name: 'login', component: () => import('@/pages/Login.vue'), meta: { title: '登录' } },
 ]

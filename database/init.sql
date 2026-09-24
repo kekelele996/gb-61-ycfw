@@ -118,6 +118,27 @@ CREATE TABLE IF NOT EXISTS answers (
   KEY idx_answers_question (question_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE IF NOT EXISTS quiz_questions (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  question VARCHAR(255) NOT NULL,
+  options JSON NOT NULL,
+  answer INT NOT NULL,
+  explanation VARCHAR(512) NOT NULL DEFAULT '',
+  created_at DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS wrong_questions (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  user_id BIGINT UNSIGNED NOT NULL,
+  question_id BIGINT UNSIGNED NOT NULL,
+  selected_index INT NOT NULL,
+  mastered TINYINT(1) NOT NULL DEFAULT 0,
+  created_at DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3),
+  updated_at DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
+  UNIQUE KEY uk_wrong_user_question (user_id, question_id),
+  KEY idx_wrong_user_mastered (user_id, mastered)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 -- 种子数据
 INSERT INTO users (username, email, password_hash, nickname, bio, role) VALUES
   ('admin', 'admin@gbplantwiki.local', '$2a$10$92HNAGfeO3qr7w17GkmGaOaBDxCQ7Q73gbeQ.dGGfgnIuhpPbZH4a', '园艺管理员', '平台内容维护管理员', 'admin'),
@@ -155,3 +176,11 @@ INSERT INTO questions (user_id, title, content, images, status) VALUES
 INSERT INTO answers (question_id, user_id, content, is_best, like_count) VALUES
   (1, 1, '新上盆植物根系未恢复，建议先放在散射光处缓苗，见干见湿浇水，避免积水。', 0, 5),
   (2, 1, '可以砍头繁殖，砍下的头部晾干后重新扦插，母株会萌发侧芽。', 0, 8);
+
+INSERT INTO quiz_questions (id, question, options, answer, explanation) VALUES
+  (1, '以下哪种植物属于多肉植物？', JSON_ARRAY('月季', '吉娃娃', '碗莲', '龟背竹'), 1, '吉娃娃为景天科拟石莲属多肉植物。'),
+  (2, '多肉植物夏季施肥的原则是？', JSON_ARRAY('薄肥勤施', '大量施肥', '停止施肥', '只施氮肥'), 2, '夏季高温多数多肉休眠，应停止施肥避免肥害。'),
+  (3, '月季黑斑病的典型症状是？', JSON_ARRAY('叶片白粉', '黑色圆形斑点', '叶背蛛网', '叶片卷曲'), 1, '黑斑病叶片出现黑色圆形斑点，边缘放射状。'),
+  (4, '龟背竹适合的光照条件是？', JSON_ARRAY('全日照', '散射光', '完全黑暗', '强直射光'), 1, '龟背竹耐阴，适合明亮散射光环境。'),
+  (5, '换盆的最佳季节通常是？', JSON_ARRAY('夏季', '深冬', '春季', '雨季'), 2, '春季气温回升、根系活跃，是换盆最佳时机。'),
+  (6, '“见干见湿”的浇水原则适用于？', JSON_ARRAY('所有植物', '多肉植物', '绝大多数盆栽植物', '水生植物'), 2, '绝大多数盆栽植物遵循见干见湿原则。');
