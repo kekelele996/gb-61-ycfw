@@ -21,10 +21,16 @@ func migrate(db *gorm.DB) error {
 		&model.UserGarden{},
 		&model.Question{},
 		&model.Answer{},
+		&model.QuizQuestion{},
+		&model.WrongQuestion{},
 	)
 }
 
 func seed(db *gorm.DB) error {
+	if err := seedQuizQuestions(db); err != nil {
+		return err
+	}
+
 	var count int64
 	if err := db.Model(&model.User{}).Count(&count).Error; err != nil {
 		return err
@@ -105,5 +111,29 @@ func seed(db *gorm.DB) error {
 	logger.Info("gbplantwiki seed data created",
 		"users", 2, "plants", len(plants), "articles", len(articles),
 		"pests", len(pests), "reminders", len(reminders), "questions", len(questions), "answers", len(answers))
+	return nil
+}
+
+// seedQuizQuestions populates the care quiz bank. It is idempotent so existing
+// databases pick up the quiz feature on next startup.
+func seedQuizQuestions(db *gorm.DB) error {
+	var count int64
+	if err := db.Model(&model.QuizQuestion{}).Count(&count).Error; err != nil {
+		return err
+	}
+	if count > 0 {
+		return nil
+	}
+	quizQuestions := []model.QuizQuestion{
+		{Question: "以下哪种植物属于多肉植物？", Options: `["月季","吉娃娃","碗莲","龟背竹"]`, AnswerIndex: 1, Explanation: "吉娃娃为景天科拟石莲属多肉植物。"},
+		{Question: "多肉植物夏季施肥的原则是？", Options: `["薄肥勤施","大量施肥","停止施肥","只施氮肥"]`, AnswerIndex: 2, Explanation: "夏季高温多数多肉休眠，应停止施肥避免肥害。"},
+		{Question: "月季黑斑病的典型症状是？", Options: `["叶片白粉","黑色圆形斑点","叶背蛛网","叶片卷曲"]`, AnswerIndex: 1, Explanation: "黑斑病叶片出现黑色圆形斑点，边缘放射状。"},
+		{Question: "龟背竹适合的光照条件是？", Options: `["全日照","散射光","完全黑暗","强直射光"]`, AnswerIndex: 1, Explanation: "龟背竹耐阴，适合明亮散射光环境。"},
+		{Question: "换盆的最佳季节通常是？", Options: `["夏季","深冬","春季","雨季"]`, AnswerIndex: 2, Explanation: "春季气温回升、根系活跃，是换盆最佳时机。"},
+		{Question: "“见干见湿”的浇水原则适用于？", Options: `["所有植物","多肉植物","绝大多数盆栽植物","水生植物"]`, AnswerIndex: 2, Explanation: "绝大多数盆栽植物遵循见干见湿原则。"},
+	}
+	if err := db.Create(&quizQuestions).Error; err != nil {
+		return err
+	}
 	return nil
 }

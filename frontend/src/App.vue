@@ -10,7 +10,10 @@
         <el-menu-item index="/calendar">季节日历</el-menu-item>
         <el-menu-item index="/garden">我的花园</el-menu-item>
         <el-menu-item index="/questions">问答社区</el-menu-item>
-        <el-menu-item index="/quiz">养护测验</el-menu-item>
+        <el-menu-item index="/quiz">
+          养护测验
+          <el-badge v-if="wrongBook.unmastered > 0" :value="wrongBook.unmastered" :max="99" class="nav-badge" />
+        </el-menu-item>
       </el-menu>
       <div class="user-area">
         <template v-if="auth.token">
@@ -34,17 +37,31 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
+import { useWrongBookStore } from '@/stores/wrongBookStore'
 
 const auth = useAuthStore()
+const wrongBook = useWrongBookStore()
 const router = useRouter()
+
+onMounted(() => {
+  if (auth.isLoggedIn) wrongBook.load()
+})
+
+// Keep the badge in sync when the user logs in or out during the session.
+watch(() => auth.token, (token) => {
+  if (token) wrongBook.load(true)
+  else wrongBook.reset()
+})
 
 function onCommand(cmd: string) {
   if (cmd === 'profile') {
     router.push('/profile')
   } else if (cmd === 'logout') {
     auth.logout()
+    wrongBook.reset()
     router.push('/')
   }
 }
@@ -57,4 +74,6 @@ html, body, #app { margin: 0; height: 100%; background: #f6f8f4; font-family: "P
 .brand { font-size: 20px; font-weight: 700; color: #3c8d5c; cursor: pointer; white-space: nowrap; }
 .user-area { margin-left: auto; }
 .user-name { cursor: pointer; color: #3c8d5c; font-weight: 600; }
+.nav-badge { margin-left: 8px; }
+.nav-badge :deep(.el-badge__content) { transform: translateY(-10px); }
 </style>

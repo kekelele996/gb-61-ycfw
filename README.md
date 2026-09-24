@@ -67,7 +67,7 @@ gb-61/
 │   ├── cmd/server/              # main.go + migrate/seed
 │   └── internal/
 │       ├── config/              # 环境变量解析
-│       ├── model/               # 9 个实体，按实体分文件
+│       ├── model/              # 11 个实体，按实体分文件
 │       ├── repository/          # 按实体分文件，哨兵错误
 │       ├── service/             # 按实体分文件，构造器注入
 │       ├── handler/             # 按实体分文件 + upload/home
@@ -159,6 +159,11 @@ gb-61/
 | POST | /api/v1/questions/:id/answers | 登录 | 回答问题 |
 | PUT | /api/v1/questions/:id/adopt | 登录 | 采纳最佳回答（事务：清旧最佳+标最佳+关闭问题） |
 | PUT | /api/v1/answers/:id/like | 登录 | 回答点赞 |
+| GET | /api/v1/quiz/questions | 公开 | 测验题库（不返回正确答案） |
+| POST | /api/v1/quiz/submit | 公开（登录留痕） | 交卷批改；登录用户答错的题自动收入错题本（同题仅一条），匿名只看成绩不留记录 |
+| GET | /api/v1/quiz/wrong-questions | 登录 | 错题本列表，可按 mastered=true/false 筛选 |
+| GET | /api/v1/quiz/wrong-questions/stats | 登录 | 未掌握数量与掌握进度 |
+| PUT | /api/v1/quiz/wrong-questions/:questionId/retry | 登录 | 重做错题：答对标记已掌握，答错更新选择并保持未掌握 |
 | POST | /api/v1/uploads | 登录（限流） | 上传图片 |
 
 ## 枚举出现位置清单
